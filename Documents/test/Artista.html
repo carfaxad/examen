@@ -15,6 +15,16 @@
 	<div ng-app='' ng-controller="contPost">
 		<div class="col-sm-6">
 			<h1>AngularJS POST</h1>
+			<form>
+				<span>Profile Pic</span><input class="btn btn-default btn-sm" type="file" name="file1" onchange="angular.element(this).scope().addi(this)"><br>
+				<span>Background Pic</span><input class="btn btn-default btn-sm" type="file" name="file2" onchange="angular.element(this).scope().addo(this)">
+			</form>
+			<ul>
+				<li ng-repeat="file1 in files1"> {{file1.name}}</li>
+			</ul>
+			<ul>
+				<li ng-repeat="file2 in files2"> {{file2.name}}</li>
+			</ul>
 			<p>
 				<button ng-click="artista.crear()" class="btn btn-primary">Crear nuevo Artista</button>
 			</p>
@@ -44,19 +54,18 @@
 			url : 'http://54.200.77.121/artist',
 			respuesta : "",
 			crear : function(){
-				$http({
-					method: "POST",
-					url: $scope.artista.url,
-					//headers: {'Content-Type': "application/octet-stream"},
-					headers: {'Content-Type': "application/x-www-form-urlencoded"},
-					//headers: {'Content-Type': "multipart/form-data"},
-					data : {
-                        genre : "01", //"lo-fi Jazz",
-                        name : "examen2", //"Sculpture"                    
-                    	background_image : "@image.jpg",//"http://fodiodatabase.com/image/cover/Skalpel.jpg",
-                        profile_image : "@image.jpg",//"http://s.pixogs.com/image/A-150-124865-001.jpg",
-                    }        
-                }).success(function(data, status, headers, config) {
+				var datos = new FormData()
+				datos.append('background_image',$scope.files1[0])
+				datos.append('profile_image',$scope.files2[0])
+				datos.append('genre','01')
+				datos.append('name','examen_CarlosOrtiz')
+
+				$http.post($scope.artista.url,datos,
+								{
+									transformRequest:angular.identity,
+									headers:{'Content-Type': undefined}
+								}).
+				success(function(data, status, headers, config) {
                 	$scope.respuesta0 = data
                 }).error(function(data, status, headers, config) {
                 	$scope.respuesta0 = data
@@ -66,7 +75,16 @@
             	$http.get($scope.artista.url).success(function(data){                		
             		$scope.respuesta1 = data
             	})
-            }
+            },
+           
+        };
+        $scope.addi = function(elm){
+        		$scope.files1= elm.files
+        		$scope.$apply()
+        };
+        $scope.addo = function(elm){
+        		$scope.files2 = elm.files
+        		$scope.$apply()
         };
     }
     </script>
