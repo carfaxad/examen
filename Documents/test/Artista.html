@@ -6,28 +6,47 @@
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 		<!--<link rel="stylesheet" href="bootstrap-table/dist/bootstrap-table.min.css">-->
+		<style type="text/css">
+		button{
+			margin: 10px 0;
+		}
+		</style>
 	</head>
 	<div ng-app='' ng-controller="contPost">
 		<div class="col-sm-6">
-			<p><button ng-click="artista.crear()">Crear nuevo Artista</button></p>
-			<pre> {{artista.respuesta0}} </pre>
+			<h1>AngularJS POST</h1>
+			<p>
+				<button ng-click="artista.crear()" class="btn btn-primary">Crear nuevo Artista</button>
+			</p>
+			<pre> {{respuesta0}} </pre>
 		</div>
-		<div class="col-sm-6"><p><button ng-click="artista.obtener()">Obtener Lista</button></p>
-			
-			<pre>{{artista.respuesta1 | json}} </pre>
+		<div class="col-sm-6">
+			<h1>AngularJS GET</h1>
+			<p>
+				<button ng-click="artista.obtener()" class="btn btn-primary">Obtener Lista</button>
+			</p>
+			<table class="table table-striped">
+				<tr>
+					<th>Nombre</th>
+					<th>Id Nodo</th>
+				</tr>
+				<tr ng-repeat="item in respuesta1.response">
+					<td>{{item.name}}</td>
+					<td>{{item.node_id}}</td>
+				</tr>
+			</table>
+			<!--<pre>{{	respuesta1 | json}} </pre>-->
 		</div>
 	</div>
 	<script>
-
 	function contPost($scope,$http){
 		$scope.artista = {
 			url : 'http://54.200.77.121/artist',
 			respuesta : "",
 			crear : function(){
-				var a = $scope.artista
 				$http({
 					method: "POST",
-					url: a.url,
+					url: $scope.artista.url,
 					//headers: {'Content-Type': "application/octet-stream"},
 					headers: {'Content-Type': "application/x-www-form-urlencoded"},
 					//headers: {'Content-Type': "multipart/form-data"},
@@ -38,25 +57,19 @@
                         profile_image : "@image.jpg",//"http://s.pixogs.com/image/A-150-124865-001.jpg",
                     }        
                 }).success(function(data, status, headers, config) {
-                    	var a = $scope.artista
-                    	a.respuesta0 = data
+                	$scope.respuesta0 = data
                 }).error(function(data, status, headers, config) {
-                    	var a = $scope.artista
-                    	a.respuesta0 =  "mal"
+                	$scope.respuesta0 = data
                 });
             },
             obtener : function(){
-               	var a = $scope.artista
-               	$http.get(a.url).success(function(data){                		
-               		a.respuesta1 = data
-               	})
+            	$http.get($scope.artista.url).success(function(data){                		
+            		$scope.respuesta1 = data
+            	})
             }
         };
     }
-
     </script>
-
-    <!-- Latest compiled and minified JavaScript -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
